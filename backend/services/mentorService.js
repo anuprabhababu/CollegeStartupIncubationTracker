@@ -1,22 +1,22 @@
-const supabase = require('../config/supabaseClient');
+const pool = require('../config/db');
 
 async function getAllMentors() {
-  const { data, error } = await supabase
-    .from('mentors')
-    .select('*');
-
-  if (error) throw error;
-  return data;
+  const result = await pool.query('SELECT * FROM mentors');
+  return result.rows;
 }
 
 async function addMentor(mentor) {
-  const { data, error } = await supabase
-    .from('mentors')
-    .insert([mentor])
-    .select();
+  const { mentor_name, expertise_area, email, contact_number } = mentor;
 
-  if (error) throw error;
-  return data;
+  const result = await pool.query(
+    `INSERT INTO mentors 
+     (mentor_name, expertise_area, email, contact_number)
+     VALUES ($1, $2, $3, $4)
+     RETURNING *`,
+    [mentor_name, expertise_area, email, contact_number]
+  );
+
+  return result.rows[0];
 }
 
 module.exports = {

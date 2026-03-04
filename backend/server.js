@@ -1,23 +1,29 @@
-require('dotenv').config();
 const express = require('express');
-const { Client } = require('pg');
+const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
+
+const authRoutes = require('./routes/auth');
+const startupsRoutes = require('./routes/startups');
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+// Serve frontend
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/startups', startupsRoutes);
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-client.connect()
-  .then(() => console.log("✅ PostgreSQL Connected"))
-  .catch(err => console.error("❌ Connection Error", err));
-
-app.get("/", (req, res) => {
-  res.send("Server running successfully");
-});
-
-app.listen(process.env.PORT, () => {
-  console.log("Server running on port", process.env.PORT);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

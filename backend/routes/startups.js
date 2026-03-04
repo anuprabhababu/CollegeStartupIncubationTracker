@@ -1,23 +1,36 @@
 const express = require('express');
 const router = express.Router();
-const startupService = require('../services/startupService');
+const pool = require('../config/db');
 
-// GET all startups
+// GET ALL STARTUPS
 router.get('/', async (req, res) => {
   try {
-    const startups = await startupService.getAllStartups();
-    res.json(startups);
+    const result = await pool.query(
+      'SELECT * FROM startups ORDER BY startup_id DESC'
+    );
+    res.json(result.rows);
   } catch (err) {
+    console.log("STARTUP FETCH ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ADD new startup
+// ADD STARTUP
 router.post('/', async (req, res) => {
+  const { startup_name, domain, idea_description } = req.body;
+
   try {
-    const newStartup = await startupService.addStartup(req.body);
-    res.status(201).json(newStartup);
+    await pool.query(
+      `INSERT INTO startups 
+       (startup_name, domain, idea_description, founding_date, current_status, student_id)
+       VALUES ($1, $2, $3, NOW(), 'Active', 1)`,
+      [startup_name, domain, idea_description]
+    );
+
+    res.json({ message: "Startup added successfully" });
+
   } catch (err) {
+    console.log("STARTUP INSERT ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });
