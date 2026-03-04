@@ -27,6 +27,8 @@ Logout
 
 <div class="container mt-4">
 
+<h4 id="welcomeText" class="mb-4"></h4>
+
 <div class="row g-3">
 
 <div class="col-md-3">
@@ -81,24 +83,31 @@ Logout
 
 <script>
 
-const user=JSON.parse(localStorage.getItem("user"))
+const user = JSON.parse(localStorage.getItem("user"))
 
+/* Redirect if not logged in */
 if(!user){
 window.location.href="/login.html"
 }
 
+/* Show welcome message */
+document.getElementById("welcomeText").innerText =
+"Welcome, " + user.name
+
+
+/* Load startups */
 async function loadStartups(){
 
-const res=await fetch("/api/startups")
-const data=await res.json()
+const res = await fetch("/api/startups")
+const data = await res.json()
 
-const table=document.getElementById("startupTable")
+const table = document.getElementById("startupTable")
 
 table.innerHTML=""
 
-data.forEach(s=>{
+data.forEach(s => {
 
-table.innerHTML+=`
+table.innerHTML += `
 <tr>
 <td>${s.startup_name}</td>
 <td>${s.domain}</td>
@@ -112,9 +121,11 @@ table.innerHTML+=`
 
 loadStartups()
 
+
+/* Logout */
 function logout(){
 localStorage.removeItem("user")
-window.location.href="/login.html"
+window.location.href="/index.html"
 }
 
 </script>
