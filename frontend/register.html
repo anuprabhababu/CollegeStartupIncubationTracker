@@ -1,21 +1,29 @@
 <form id="registerForm">
 
-  <div class="mb-3">
-    <label>Full Name</label>
-    <input type="text" class="form-control" id="name" required>
-  </div>
+<div class="mb-3">
+<label>Full Name</label>
+<input type="text" class="form-control" id="name" required>
+</div>
 
-  <div class="mb-3">
-    <label>Email</label>
-    <input type="email" class="form-control" id="email" required>
-  </div>
+<div class="mb-3">
+<label>Email</label>
+<input type="email" class="form-control" id="email" required>
+</div>
 
-  <div class="mb-3">
-    <label>Password</label>
-    <input type="password" class="form-control" id="password" required>
-  </div>
+<div class="mb-3">
+<label>Password</label>
+<input type="password" class="form-control" id="password" required>
+</div>
 
-  <button type="submit" class="btn btn-success w-100">Register</button>
+<div class="mb-3">
+<label>Register As</label>
+<select class="form-control" id="role">
+<option value="student">Student</option>
+<option value="mentor">Mentor</option>
+</select>
+</div>
+
+<button type="submit" class="btn btn-success w-100">Register</button>
 
 </form>
 
@@ -25,36 +33,35 @@
 <script>
 document.getElementById("registerForm").addEventListener("submit", async function(e){
 
-  e.preventDefault();
+e.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+const name = document.getElementById("name").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+const role = document.getElementById("role").value;
 
-  const res = await fetch("/api/auth/register",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify({name,email,password})
-  });
+const res = await fetch("/api/auth/register",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body: JSON.stringify({name,email,password,role})
+});
 
-  const data = await res.json();
+const data = await res.json();
 
-  const msg = document.getElementById("message");
+const msg = document.getElementById("message");
 
-  if(res.ok){
-    msg.innerHTML = "✅ Registration successful! Redirecting to dashboard...";
-    msg.style.color = "green";
+if(res.ok){
+msg.innerHTML = "✅ Registration successful!";
+msg.style.color = "green";
 
-    setTimeout(()=>{
-      window.location.href="/dashboard.html";
-    },2000);
+setTimeout(()=>{
+window.location.href="/login.html";
+},1500);
 
-  }else{
-    msg.innerHTML = "❌ " + data.error;
-    msg.style.color = "red";
-  }
+}else{
+msg.innerHTML = "❌ " + data.error;
+msg.style.color = "red";
+}
 
 });
 </script>
