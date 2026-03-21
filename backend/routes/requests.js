@@ -6,21 +6,41 @@ const pool = require('../config/db');
 /* SEND REQUEST (student) */
 router.post('/', async (req, res) => {
 
-  const { startup_id, mentor_id } = req.body;
+const { startup_id, mentor_id } = req.body;
 
-  try {
+try {
 
-    await pool.query(
-      `INSERT INTO mentor_requests (startup_id, mentor_id)
-       VALUES ($1,$2)`,
-      [startup_id, mentor_id]
-    );
+/* CHECK EXISTING REQUEST */
+const existing = await pool.query(
+`SELECT * FROM mentor_requests 
+ WHERE startup_id=$1 AND mentor_id=$2`,
+[startup_id, mentor_id]
+);
 
-    res.json({ message: "Request sent" });
+if(existing.rows.length > 0){
+return res.status(400).json({ message: "Request already sent" });
+}
 
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+/* INSERT ONLY IF NOT EXISTS */
+await pool.query(
+`INSERT INTO mentor_requests (startup_id, mentor_id, status)
+ VALUES ($1,$2,'Pending')`,
+[startup_id, mentor_id]
+);
+
+res.json({ message: "Request sent successfully" });
+
+} catch (err) {
+
+console.log(err);
+
+if(err.code === '23505'){
+return res.status(400).json({ message: "Request already sent" });
+}
+
+res.status(500).json({ message: "Server error" });
+
+}
 
 });
 
@@ -98,8 +118,14 @@ router.post('/reject', async (req, res) => {
     res.json({ message: "Request rejected" });
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+
+if(err.code === '23505'){
+return res.status(400).json({ error: "Request already sent" });
+}
+
+res.status(500).json({ error: "Request already sent" });
+
+}
 
 });
 

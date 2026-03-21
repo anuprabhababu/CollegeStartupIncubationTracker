@@ -138,11 +138,9 @@ label{
 }
 
 /* ================= TABLE (FIXED PROPERLY) ================= */
-.table{
-  background:#ffffff !important;
-  color:#111827 !important;
-  border-radius:10px;
-  overflow:hidden;
+.table thead th {
+  background: #1f2937;
+  color: white;
 }
 
 /* HEADER */
