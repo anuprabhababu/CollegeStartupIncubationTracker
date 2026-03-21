@@ -21,7 +21,6 @@
 
 <form id="registerForm">
 
-<!-- COMMON -->
 <div class="mb-3">
 <label>Full Name</label>
 <input type="text" class="form-control" id="name" required>
@@ -39,11 +38,14 @@
 
 <div class="mb-3">
 <label>Register As</label>
+
 <select class="form-control" id="role" onchange="toggleFields()">
+
 <option value="student">Student</option>
 <option value="mentor">Mentor</option>
 </select>
 </div>
+
 
 <!-- STUDENT -->
 <div id="studentFields">
@@ -101,8 +103,9 @@ function toggleFields(){
 // submit
 document.getElementById("registerForm").addEventListener("submit", async function(e){
 
-  e.preventDefault();
+e.preventDefault();
 
+<<<<<<< HEAD
   const role = document.getElementById("role").value;
 
   let body = {
@@ -143,6 +146,35 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     msg.innerHTML = "❌ " + data.error;
     msg.style.color = "red";
   }
+=======
+const name = document.getElementById("name").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+const role = document.getElementById("role").value;
+
+const res = await fetch("/api/auth/register",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body: JSON.stringify({name,email,password,role})
+});
+
+const data = await res.json();
+
+const msg = document.getElementById("message");
+
+if(res.ok){
+msg.innerHTML = "✅ Registration successful!";
+msg.style.color = "green";
+
+setTimeout(()=>{
+window.location.href="/login.html";
+},1500);
+
+}else{
+msg.innerHTML = "❌ " + data.error;
+msg.style.color = "red";
+}
+>>>>>>> f45f8ae626fa61058944c4f51c7ed7ebbd482663
 
 });
 </script>

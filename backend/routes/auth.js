@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 // ================= REGISTER =================
 router.post('/register', async (req, res) => {
 
+
 const { name, email, password, role, dept, year, mobile, contact_number, expertise_area  } = req.body;
 
 try {
@@ -39,6 +40,7 @@ const hashedPassword = await bcrypt.hash(password,10);
 if(role === "student"){
 
 await pool.query(
+
   `INSERT INTO students(name, email, password, department, year_of_study, contact_number)
    VALUES($1,$2,$3,$4,$5,$6)`,
   [name, email, hashedPassword, dept, year, mobile]
@@ -49,6 +51,7 @@ await pool.query(
 else if(role === "mentor"){
 
 await pool.query(
+
   `INSERT INTO mentors(mentor_name, email, password, contact_number, expertise_area)
    VALUES($1,$2,$3,$4,$5)`,
   [name, email, hashedPassword, contact_number, expertise_area]
