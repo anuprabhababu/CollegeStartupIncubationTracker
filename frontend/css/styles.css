@@ -4,8 +4,8 @@
   --card:#111827;
   --border:#1f2937;
 
-  --text:#f3f4f6;        /* MAIN TEXT (soft white) */
-  --muted:#cbd5e1;       /* secondary text (visible light grey) */
+  --text:#f3f4f6;
+  --muted:#cbd5e1;
 
   --primary:#6366f1;
   --primary-hover:#4f46e5;
@@ -29,7 +29,7 @@ body{
 
 /* ================= TEXT ================= */
 h1,h2,h3,h4,h5{
-  color:#f9fafb;   /* brighter headings */
+  color:#f9fafb;
   font-weight:600;
 }
 
@@ -37,7 +37,6 @@ p, span, small{
   color:var(--muted);
 }
 
-/* labels */
 label{
   color:#e5e7eb;
   font-weight:500;
@@ -91,6 +90,17 @@ label{
   border:none;
 }
 
+.btn-warning{
+  background:var(--warning);
+  border:none;
+  color:black;
+}
+
+.btn-danger{
+  background:var(--danger);
+  border:none;
+}
+
 .btn-outline-dark{
   border:1px solid var(--border);
   color:var(--text);
@@ -104,7 +114,7 @@ label{
 .form-control{
   background:#020617;
   border:1px solid #374151;
-  color:#f9fafb;   /* FIXED INPUT TEXT */
+  color:#f9fafb;
   border-radius:8px;
 }
 
@@ -115,45 +125,49 @@ label{
   color:#ffffff;
 }
 
-/* placeholder */
 .form-control::placeholder{
   color:#94a3b8;
 }
-/* MATCH DISABLED INPUT STYLE WITH NORMAL INPUTS */
+
 .form-control:disabled,
 .form-control[readonly]{
-  background:#020617 !important;   /* same dark bg */
-  color:#f9fafb !important;        /* same white text */
+  background:#020617 !important;
+  color:#f9fafb !important;
   border:1px solid #374151 !important;
-  opacity:1 !important;            /* remove faded look */
-  cursor:not-allowed;              /* optional */
+  opacity:1 !important;
 }
 
-/* ================= TABLE ================= */
-/* TABLE FIX (WHITE BACKGROUND + DARK TEXT) */
+/* ================= TABLE (FIXED PROPERLY) ================= */
 .table{
   background:#ffffff !important;
-  color:#111827 !important;   /* dark text */
+  color:#111827 !important;
+  border-radius:10px;
+  overflow:hidden;
 }
 
+/* HEADER */
 .table thead{
-  background:#f1f5f9 !important;
+  background:#1f2937 !important;
 }
 
-.table th{
-  color:#f3f4f6 !important;
+.table thead th{
+  color:#ffffff !important;
+  font-weight:600;
+  border-bottom:2px solid #374151;
+}
+
+/* BODY */
+.table tbody tr{
+  background:#ffffff !important;
 }
 
 .table td{
   color:#111827 !important;
 }
 
-.table tbody tr{
-  background:#ffffff !important;
-}
-
+/* HOVER */
 .table tbody tr:hover{
-  background:#f9fafb !important;
+  background:#f1f5f9 !important;
 }
 
 /* ================= STATUS ================= */

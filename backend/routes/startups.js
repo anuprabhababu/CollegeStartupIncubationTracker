@@ -23,7 +23,28 @@ router.get('/', async (req, res) => {
   }
 
 });
+router.get('/student/:id', async (req, res) => {
 
+  const { id } = req.params;
+
+  try {
+
+    const result = await pool.query(
+      'SELECT * FROM startups WHERE student_id = $1 ORDER BY startup_id DESC',
+      [id]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.log("STUDENT STARTUP FETCH ERROR:", err);
+
+    res.status(500).json({ error: err.message });
+
+  }
+
+});
 
 /* ADD STARTUP */
 

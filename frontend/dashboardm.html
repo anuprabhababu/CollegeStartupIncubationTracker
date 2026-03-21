@@ -4,26 +4,47 @@
 <title>Mentor Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
 <link rel="stylesheet" href="/css/styles.css">
 
 </head>
 
 <body>
 
+<!-- NAVBAR -->
+<nav class="navbar p-3" style="background:#111827; color:white;">
+  <div class="container d-flex justify-content-between align-items-center">
+
+    <h5 class="mb-0">Mentor Dashboard</h5>
+
+    <div>
+      <button class="btn btn-outline-dark btn-sm" onclick="logout()">
+        Logout
+      </button>
+    </div>
+
+  </div>
+</nav>
+
 <div class="container mt-5">
 
-<h3>Mentor Requests</h3>
+<h3 style="color:white;">Mentor Requests</h3>
 
-<table class="table table-bordered mt-3">
+<table class="table table-bordered text-dark bg-white">
 
-<thead>
 <tr>
+<th style="color:white !important;">Startup</th>
+<th style="color:white !important;">Status</th>
+<th style="color:white !important;">Action</th>
+</tr>
+
+<thead style="background:#1f2937;">
 <th>Startup</th>
 <th>Status</th>
 <th>Action</th>
-</tr>
 </thead>
 
 <tbody id="requestTable"></tbody>
@@ -43,37 +64,51 @@ if(!user){
 /* LOAD REQUESTS */
 async function loadRequests(){
 
-  const res = await fetch("/api/requests/" + user.id);
-  const data = await res.json();
+try{
 
-  const table = document.getElementById("requestTable");
-  table.innerHTML = "";
+const res = await fetch("/api/requests/" + user.id);
+const data = await res.json();
 
-  data.forEach(r => {
+const table = document.getElementById("requestTable");
+table.innerHTML = "";
 
-    table.innerHTML += `
-    <tr>
-      <td>${r.startup_name}</td>
-      <td>${r.status}</td>
-      <td>
-        ${
-          r.status === "Pending"
-          ? `
-          <button class="btn btn-success btn-sm"
-          onclick="accept(${r.request_id}, ${r.startup_id})">
-          Accept</button>
+/* If no data */
+if(data.length === 0){
+table.innerHTML = `<tr><td colspan="3">No requests found</td></tr>`;
+return;
+}
 
-          <button class="btn btn-danger btn-sm"
-          onclick="reject(${r.request_id})">
-          Reject</button>
-          `
-          : "-"
-        }
-      </td>
-    </tr>
-    `;
+data.forEach(r => {
 
-  });
+table.innerHTML += `
+<tr>
+<td>${r.startup_name}</td>
+<td>${r.status}</td>
+<td>
+${
+r.status === "Pending"
+? `
+<button class="btn btn-success btn-sm"
+onclick="accept(${r.request_id}, ${r.startup_id})">
+Accept</button>
+
+<button class="btn btn-danger btn-sm"
+onclick="reject(${r.request_id})">
+Reject</button>
+`
+: "-"
+}
+</td>
+</tr>
+`;
+
+});
+
+}catch(err){
+console.error(err);
+document.getElementById("requestTable").innerHTML =
+`<tr><td colspan="3">Error loading data</td></tr>`;
+}
 
 }
 
@@ -83,32 +118,39 @@ loadRequests();
 /* ACCEPT */
 async function accept(request_id, startup_id){
 
-  await fetch("/api/requests/accept",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      request_id,
-      startup_id,
-      mentor_id:user.id
-    })
-  });
+await fetch("/api/requests/accept",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body: JSON.stringify({
+request_id,
+startup_id,
+mentor_id:user.id
+})
+});
 
-  alert("Accepted");
-  loadRequests();
+alert("Accepted");
+loadRequests();
 }
 
 
 /* REJECT */
 async function reject(request_id){
 
-  await fetch("/api/requests/reject",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ request_id })
-  });
+await fetch("/api/requests/reject",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body: JSON.stringify({ request_id })
+});
 
-  alert("Rejected");
-  loadRequests();
+alert("Rejected");
+loadRequests();
+}
+
+
+/* LOGOUT */
+function logout(){
+localStorage.removeItem("user");
+window.location.href="/index.html";
 }
 
 </script>
