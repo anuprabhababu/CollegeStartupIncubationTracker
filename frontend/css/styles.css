@@ -1,66 +1,209 @@
+/* ================= ROOT THEME ================= */
+:root{
+  --bg:#0b1220;
+  --card:#111827;
+  --border:#1f2937;
+
+  --text:#f3f4f6;        /* MAIN TEXT (soft white) */
+  --muted:#cbd5e1;       /* secondary text (visible light grey) */
+
+  --primary:#6366f1;
+  --primary-hover:#4f46e5;
+
+  --success:#22c55e;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+}
+
+/* ================= GLOBAL ================= */
 body{
-    background:#f5f6f8;
-    font-family: "Segoe UI", Arial, sans-serif;
+  background:linear-gradient(135deg,#0b1220,#020617);
+  color:var(--text);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  line-height:1.6;
 }
 
 .container{
-    max-width:1100px;
+  max-width:1100px;
 }
 
+/* ================= TEXT ================= */
+h1,h2,h3,h4,h5{
+  color:#f9fafb;   /* brighter headings */
+  font-weight:600;
+}
+
+p, span, small{
+  color:var(--muted);
+}
+
+/* labels */
+label{
+  color:#e5e7eb;
+  font-weight:500;
+}
+
+/* ================= NAVBAR ================= */
+.navbar{
+  background:rgba(17,24,39,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid var(--border);
+}
+
+.navbar h5{
+  color:#ffffff;
+}
+
+/* ================= CARDS ================= */
 .card{
-    border:none;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.5);
+  transition:0.3s;
 }
 
-h2,h3,h4{
-    font-weight:600;
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.7);
+}
+
+/* ================= BUTTONS ================= */
+.btn{
+  border-radius:8px;
+  font-weight:500;
+  transition:0.2s;
 }
 
 .btn-primary{
-    background:#2c3e50;
-    border:none;
+  background:var(--primary);
+  border:none;
+  color:white;
 }
 
 .btn-primary:hover{
-    background:#1a252f;
+  background:var(--primary-hover);
+  transform:scale(1.05);
 }
 
-.btn-outline{
-    border:1px solid #dcdcdc;
-    background:white;
+.btn-success{
+  background:var(--success);
+  border:none;
 }
 
+.btn-outline-dark{
+  border:1px solid var(--border);
+  color:var(--text);
+}
+
+.btn-outline-dark:hover{
+  background:#1e293b;
+}
+
+/* ================= FORM ================= */
+.form-control{
+  background:#020617;
+  border:1px solid #374151;
+  color:#f9fafb;   /* FIXED INPUT TEXT */
+  border-radius:8px;
+}
+
+.form-control:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 2px rgba(99,102,241,0.25);
+  background:#020617;
+  color:#ffffff;
+}
+
+/* placeholder */
+.form-control::placeholder{
+  color:#94a3b8;
+}
+/* MATCH DISABLED INPUT STYLE WITH NORMAL INPUTS */
+.form-control:disabled,
+.form-control[readonly]{
+  background:#020617 !important;   /* same dark bg */
+  color:#f9fafb !important;        /* same white text */
+  border:1px solid #374151 !important;
+  opacity:1 !important;            /* remove faded look */
+  cursor:not-allowed;              /* optional */
+}
+
+/* ================= TABLE ================= */
+/* TABLE FIX (WHITE BACKGROUND + DARK TEXT) */
 .table{
-    background:white;
+  background:#ffffff !important;
+  color:#111827 !important;   /* dark text */
 }
 
 .table thead{
-    background:#f1f3f5;
+  background:#f1f5f9 !important;
 }
 
-.navbar{
-    background:white;
-    border-bottom:1px solid #e5e5e5;
+.table th{
+  color:#f3f4f6 !important;
 }
 
-.dashboard-card{
-    background:white;
-    border-radius:8px;
-    padding:20px;
-    text-align:center;
-    border:1px solid #eaeaea;
-    transition:0.2s;
+.table td{
+  color:#111827 !important;
 }
 
-.dashboard-card:hover{
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+.table tbody tr{
+  background:#ffffff !important;
 }
 
-.dashboard-card h5{
-    margin-bottom:10px;
+.table tbody tr:hover{
+  background:#f9fafb !important;
 }
 
-.logout-btn{
-    float:right;
+/* ================= STATUS ================= */
+.status-active{
+  color:var(--success);
+  font-weight:600;
+}
+
+.status-pending{
+  color:var(--warning);
+  font-weight:600;
+}
+
+.status-rejected{
+  color:var(--danger);
+  font-weight:600;
+}
+
+/* ================= LINKS ================= */
+a{
+  color:var(--primary);
+}
+
+a:hover{
+  text-decoration:underline;
+}
+
+/* ================= SCROLL ================= */
+::-webkit-scrollbar{
+  width:6px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#374151;
+  border-radius:10px;
+}
+
+/* ================= ANIMATION ================= */
+.fade-in{
+  animation:fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* ================= MOBILE ================= */
+@media(max-width:768px){
+  .card{
+    padding:15px;
+  }
 }

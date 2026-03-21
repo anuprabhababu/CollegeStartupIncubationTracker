@@ -2,34 +2,68 @@
 <html>
 <head>
   <title>Mentor List</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="/css/styles.css">
+
 </head>
 
 <body>
 
 <div class="container mt-4">
 
-<h2 class="text-center">Mentor Directory</h2>
+  <h2 class="text-center">Mentor Directory</h2>
 
-<div class="row mt-3">
+  <div class="row mt-3" id="mentorContainer">
+  </div>
 
-<div class="col-md-4">
-<div class="card p-3">
-
-<h5>Mentor Name</h5>
-<p>Expertise Area</p>
-
-</div>
-</div>
+  <a href="index.html" class="btn btn-outline-dark mt-3">
+    Back to Home
+  </a>
 
 </div>
 
-<a href="index.html" class="btn btn-outline-dark mt-3">
-Back to Home
-</a>
+<script>
 
-</div>
+/* Load mentors from backend */
+
+async function loadMentors(){
+
+  try{
+
+    const res = await fetch("/api/mentors");
+    const mentors = await res.json();
+
+    const container = document.getElementById("mentorContainer");
+
+    container.innerHTML = "";
+
+    mentors.forEach(m => {
+
+     container.innerHTML += `
+  <div class="col-md-4">
+    <div class="card p-3 shadow mb-3">
+      <h5>${m.mentor_name}</h5>
+      <p><strong>Expertise:</strong> ${m.expertise_area}</p>
+      <p><strong>Email:</strong> ${m.email}</p>
+    </div>
+  </div>
+`;
+
+    });
+
+  }catch(err){
+    console.error("Error loading mentors:", err);
+  }
+
+}
+
+loadMentors();
+
+</script>
 
 </body>
 </html>

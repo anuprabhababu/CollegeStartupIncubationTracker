@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const startupsRoutes = require('./routes/startups');
+const mentorsRoutes = require('./routes/mentors');
 const pool = require('./config/db');
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/startups', startupsRoutes);
+app.use('/api/mentors', mentorsRoutes);
 
 // Home page
 app.get('/', (req, res) => {
