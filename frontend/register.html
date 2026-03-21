@@ -86,7 +86,6 @@
 
 </div>
 
-<!-- SCRIPT -->
 <script>
 
 // toggle
@@ -103,78 +102,83 @@ function toggleFields(){
 // submit
 document.getElementById("registerForm").addEventListener("submit", async function(e){
 
-e.preventDefault();
+  e.preventDefault();
 
-<<<<<<< HEAD
   const role = document.getElementById("role").value;
 
+  // ✅ ALWAYS use getElementById
+  const nameVal = document.getElementById("name").value.trim();
+  const emailVal = document.getElementById("email").value.trim();
+  const passwordVal = document.getElementById("password").value.trim();
+
   let body = {
-    name: name.value,
-    email: email.value,
-    password: password.value,
+    name: nameVal,
+    email: emailVal,
+    password: passwordVal,
     role
   };
 
+  // STUDENT
   if(role === "student"){
-    body.dept = dept.value;
-    body.year = year.value;
-    body.mobile = studentMobile.value;
-  } else {
-    body.contact_number = mentorMobile.value;
-    body.expertise_area = expertise.value;
+    const dept = document.getElementById("dept").value.trim();
+    const year = document.getElementById("year").value.trim();
+    const mobile = document.getElementById("studentMobile").value.trim();
+
+    if(!dept || !year || !mobile){
+      alert("Please fill all student fields");
+      return;
+    }
+
+    body.dept = dept;
+    body.year = year;
+    body.mobile = mobile;
   }
 
-  const res = await fetch("/api/auth/register",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify(body)
-  });
+  // MENTOR
+  if(role === "mentor"){
+    const mobile = document.getElementById("mentorMobile").value.trim();
+    const expertise = document.getElementById("expertise").value.trim();
 
-  const data = await res.json();
-  const msg = document.getElementById("message");
+    if(!mobile || !expertise){
+      alert("Please fill all mentor fields");
+      return;
+    }
 
-  if(res.ok){
-    msg.innerHTML = "✅ Registered!";
-    msg.style.color = "lime";
-
-    setTimeout(()=>{
-      window.location.href =
-        role === "student" ? "dashboards.html" : "dashboardm.html";
-    },1000);
-
-  } else {
-    msg.innerHTML = "❌ " + data.error;
-    msg.style.color = "red";
+    body.contact_number = mobile;
+    body.expertise_area = expertise;
   }
-=======
-const name = document.getElementById("name").value;
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-const role = document.getElementById("role").value;
 
-const res = await fetch("/api/auth/register",{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body: JSON.stringify({name,email,password,role})
-});
+  console.log(body); // ✅ DEBUG
 
-const data = await res.json();
+  try{
+    const res = await fetch("/api/auth/register",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(body)
+    });
 
-const msg = document.getElementById("message");
+    const data = await res.json();
+    const msg = document.getElementById("message");
 
-if(res.ok){
-msg.innerHTML = "✅ Registration successful!";
-msg.style.color = "green";
+    if(res.ok){
+      msg.innerHTML = "✅ Registered!";
+      msg.style.color = "lime";
 
-setTimeout(()=>{
-window.location.href="/login.html";
-},1500);
+      setTimeout(()=>{
+        window.location.href =
+          role === "student"
+          ? "dashboards.html"
+          : "dashboardm.html";
+      },1000);
 
-}else{
-msg.innerHTML = "❌ " + data.error;
-msg.style.color = "red";
-}
->>>>>>> f45f8ae626fa61058944c4f51c7ed7ebbd482663
+    } else {
+      msg.innerHTML = "❌ " + data.error;
+      msg.style.color = "red";
+    }
+
+  }catch(err){
+    console.error(err);
+  }
 
 });
 </script>

@@ -3,6 +3,7 @@
 <head>
 
 <title>Dashboard</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet"
@@ -16,68 +17,40 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
 <!-- NAVBAR -->
 <nav class="navbar">
-
 <div class="container d-flex justify-content-between align-items-center">
 
 <h5 class="mb-0">Startup Incubation Tracker</h5>
 
 <div>
-
-<a href="profile.html" class="btn btn-outline-dark btn-sm me-2">
-Profile
-</a>
+<a href="profile.html" class="btn btn-outline-dark btn-sm me-2">Profile</a>
 
 <button class="btn btn-outline-dark btn-sm" onclick="logout()">
 Logout
 </button>
-
 </div>
 
 </div>
-
 </nav>
 
 <div class="container mt-4">
 
 <h4 id="welcomeText"></h4>
 
-<!-- DASHBOARD CARDS -->
+<!-- ONLY ONE CARD -->
 <div class="row mt-4 g-3">
 
-<div class="col-md-3">
+<div class="col-md-4">
 <div class="card p-3 text-center">
 <h5>Register Startup</h5>
-<a href="add_startup.html" class="btn btn-outline-dark mt-2">Open</a>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card p-3 text-center">
-<h5>Startups</h5>
-<a href="startups.html" class="btn btn-outline-dark mt-2">View</a>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card p-3 text-center">
-<h5>Mentors</h5>
-<a href="mentors.html" class="btn btn-outline-dark mt-2">View</a>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card p-3 text-center">
-<h5>Progress</h5>
-<a href="progress.html" class="btn btn-outline-dark mt-2">View</a>
+<a href="add_startup.html" class="btn btn-primary mt-2">Add Startup</a>
 </div>
 </div>
 
 </div>
-
 
 <hr class="mt-5">
 
-<!-- MY STARTUPS TABLE -->
+<!-- MY STARTUPS -->
 <h4>My Startups</h4>
 
 <table class="table table-bordered mt-3">
@@ -96,67 +69,62 @@ Logout
 
 </div>
 
-
 <script>
 
-/* Get logged user */
-localStorage.setItem("user", JSON.stringify({name, role}));
-const user = JSON.parse(localStorage.getItem("user"))
+/* GET USER */
+const user = JSON.parse(localStorage.getItem("user"));
 
-if(!user){
-window.location.href="/login.html"
+if(!user || !user.id){
+  window.location.href="/login.html";
 }
-
- 
 
 document.getElementById("welcomeText").innerText =
-"Welcome, " + user.name
+"Welcome, " + user.name;
 
 
-/* Load startups */
-
+/* LOAD ONLY MY STARTUPS */
 async function loadStartups(){
 
-try{
+  try{
 
-const res = await fetch("/api/startups")
-const startups = await res.json()
+    const res = await fetch("/api/startups/student/" + user.id);
+    const startups = await res.json();
 
-const table = document.getElementById("startupTable")
+    const table = document.getElementById("startupTable");
+    table.innerHTML = "";
 
-table.innerHTML=""
+    startups.forEach(s => {
 
-startups.forEach(s => {
+      table.innerHTML += `
+      <tr onclick="goToStartup(${s.startup_id})" style="cursor:pointer;">
+        <td>${s.startup_name}</td>
+        <td>${s.domain}</td>
+        <td>${s.current_status}</td>
+        
+      </tr>
+      `;
 
-table.innerHTML += `
-<tr>
-<td>${s.startup_name}</td>
-<td>${s.domain}</td>
-<td>${s.current_status}</td>
-</tr>
-`
+    });
 
-})
-
-}catch(err){
-
-console.error(err)
-
-}
+  }catch(err){
+    console.error(err);
+  }
 
 }
 
-loadStartups()
+loadStartups();
 
 
-/* Logout */
+/* CLICK → GO TO PROGRESS PAGE */
+function goToStartup(id){
+  window.location.href = "progress.html?id=" + id;
+}
 
+
+/* LOGOUT */
 function logout(){
-
-localStorage.removeItem("user")
-
-window.location.href="/index.html"
-
+  localStorage.removeItem("user");
+  window.location.href="/index.html";
 }
 
 </script>

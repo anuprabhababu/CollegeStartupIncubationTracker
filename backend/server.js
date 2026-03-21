@@ -6,6 +6,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const startupsRoutes = require('./routes/startups');
 const mentorsRoutes = require('./routes/mentors');
+const requestRoutes = require('./routes/requests');
 const pool = require('./config/db');
 
 const app = express();
@@ -21,7 +22,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/auth', authRoutes);
 app.use('/api/startups', startupsRoutes);
 app.use('/api/mentors', mentorsRoutes);
-
+app.use('/api/requests', requestRoutes);
 // Home page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));

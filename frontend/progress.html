@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>Progress Reports</title>
+<title>Startup Progress</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -13,17 +14,100 @@ href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
 <body>
 
-<div class="container mt-4">
+<div class="container mt-5" style="max-width:700px;">
 
-<h3>Startup Progress Reports</h3>
+<h3 id="startupName"></h3>
 
-<p>This page will show startup progress reports.</p>
+<p><b>Domain:</b> <span id="domain"></span></p>
+<p><b>Description:</b> <span id="desc"></span></p>
+<p><b>Status:</b> <span id="status"></span></p>
 
-<a href="dashboard.html" class="btn btn-outline-dark">
-Back to Dashboard
-</a>
+<hr>
+
+<h5>Request Mentor</h5>
+
+<select id="mentorSelect" class="form-control mb-3"></select>
+
+<button class="btn btn-primary" onclick="requestMentor()">
+Send Request
+</button>
 
 </div>
+
+<script>
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+  window.location.href="/login.html";
+}
+
+const params = new URLSearchParams(window.location.search);
+const startup_id = params.get("id");
+
+
+/* LOAD STARTUP DETAILS */
+async function loadStartup(){
+
+  const res = await fetch("/api/startups");
+  const data = await res.json();
+
+  const s = data.find(x => x.startup_id == startup_id);
+
+  document.getElementById("startupName").innerText = s.startup_name;
+  document.getElementById("domain").innerText = s.domain;
+  document.getElementById("desc").innerText = s.idea_description;
+  document.getElementById("status").innerText = s.current_status;
+
+}
+
+loadStartup();
+
+
+/* LOAD MENTORS */
+async function loadMentors(){
+
+  const res = await fetch("/api/mentors");
+  const mentors = await res.json();
+
+  const select = document.getElementById("mentorSelect");
+
+  mentors.forEach(m => {
+    select.innerHTML += `<option value="${m.mentor_id}">
+      ${m.mentor_name} (${m.expertise_area})
+    </option>`;
+  });
+
+}
+
+loadMentors();
+
+
+/* SEND REQUEST */
+async function requestMentor(){
+
+  const mentor_id = document.getElementById("mentorSelect").value;
+
+  const res = await fetch("/api/requests",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      startup_id,
+      mentor_id
+    })
+  });
+
+  const data = await res.json();
+
+  if(res.ok){
+    alert("Request sent!");
+  }else{
+    alert(data.error);
+  }
+
+}
+
+</script>
 
 </body>
 </html>
