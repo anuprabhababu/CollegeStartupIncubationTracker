@@ -7,29 +7,30 @@ const bcrypt = require('bcrypt');
 // ================= REGISTER =================
 router.post('/register', async (req, res) => {
 
-
-const { name, email, password, role, dept, year, mobile, contact_number, expertise_area  } = req.body;
+const { name, email, password, role, dept, year, mobile, contact_number, expertise_area } = req.body;
 
 try {
 
 if(!name || !email || !password || !role){
-return res.status(400).json({error:"All fields required"});
+return res.status(400).json({ error:"All fields required" });
 }
 
-/* Check if email exists in BOTH tables */
+/* CHECK EMAIL IN ALL TABLES */
 
 const studentCheck = await pool.query(
-"SELECT * FROM students WHERE email=$1",
-[email]
+"SELECT * FROM students WHERE email=$1",[email]
 );
 
 const mentorCheck = await pool.query(
-"SELECT * FROM mentors WHERE email=$1",
-[email]
+"SELECT * FROM mentors WHERE email=$1",[email]
 );
 
-if(studentCheck.rows.length > 0 || mentorCheck.rows.length > 0){
-return res.status(400).json({error:"User already exists"});
+const investorCheck = await pool.query(
+"SELECT * FROM investors WHERE email=$1",[email]
+);
+
+if(studentCheck.rows.length > 0 || mentorCheck.rows.length > 0 || investorCheck.rows.length > 0){
+return res.status(400).json({ error:"User already exists" });
 }
 
 const hashedPassword = await bcrypt.hash(password,10);
@@ -40,10 +41,9 @@ const hashedPassword = await bcrypt.hash(password,10);
 if(role === "student"){
 
 await pool.query(
-
-  `INSERT INTO students(name, email, password, department, year_of_study, contact_number)
-   VALUES($1,$2,$3,$4,$5,$6)`,
-  [name, email, hashedPassword, dept, year, mobile]
+`INSERT INTO students(name, email, password, department, year_of_study, contact_number)
+VALUES($1,$2,$3,$4,$5,$6)`,
+[name, email, hashedPassword, dept, year, mobile]
 );
 
 }
@@ -51,19 +51,28 @@ await pool.query(
 else if(role === "mentor"){
 
 await pool.query(
-
-  `INSERT INTO mentors(mentor_name, email, password, contact_number, expertise_area)
-   VALUES($1,$2,$3,$4,$5)`,
-  [name, email, hashedPassword, contact_number, expertise_area]
+`INSERT INTO mentors(mentor_name, email, password, contact_number, expertise_area)
+VALUES($1,$2,$3,$4,$5)`,
+[name, email, hashedPassword, contact_number, expertise_area]
 );
 
 }
 
-res.json({message:"Registration successful"});
+else if(role === "investor"){
+
+await pool.query(
+`INSERT INTO investors(investor_name, email, password)
+VALUES($1,$2,$3)`,
+[name, email, hashedPassword]
+);
+
+}
+
+res.json({ message:"Registration successful" });
 
 } catch(err){
 console.log("REGISTER ERROR:", err);
-res.status(500).json({error:"Server error"});
+res.status(500).json({ error:"Server error" });
 }
 
 });
@@ -76,20 +85,17 @@ const { email, password } = req.body;
 
 try{
 
-/* CHECK STUDENTS FIRST */
-
+/* STUDENT */
 let result = await pool.query(
-"SELECT * FROM students WHERE email=$1",
-[email]
+"SELECT * FROM students WHERE email=$1",[email]
 );
 
 if(result.rows.length > 0){
 
 const user = result.rows[0];
+const valid = await bcrypt.compare(password,user.password);
 
-const validPassword = await bcrypt.compare(password,user.password);
-
-if(validPassword){
+if(valid){
 return res.json({
 message:"Login successful",
 user:{
@@ -100,24 +106,20 @@ role:"student"
 }
 });
 }
-
 }
 
 
-/* CHECK MENTORS */
-
+/* MENTOR */
 result = await pool.query(
-"SELECT * FROM mentors WHERE email=$1",
-[email]
+"SELECT * FROM mentors WHERE email=$1",[email]
 );
 
 if(result.rows.length > 0){
 
 const user = result.rows[0];
+const valid = await bcrypt.compare(password,user.password);
 
-const validPassword = await bcrypt.compare(password,user.password);
-
-if(validPassword){
+if(valid){
 return res.json({
 message:"Login successful",
 user:{
@@ -128,14 +130,37 @@ role:"mentor"
 }
 });
 }
-
 }
 
-return res.status(400).json({error:"Invalid email or password"});
+
+/* INVESTOR */
+result = await pool.query(
+"SELECT * FROM investors WHERE email=$1",[email]
+);
+
+if(result.rows.length > 0){
+
+const user = result.rows[0];
+const valid = await bcrypt.compare(password,user.password);
+
+if(valid){
+return res.json({
+message:"Login successful",
+user:{
+id:user.investor_id,
+name:user.investor_name,
+email:user.email,
+role:"investor"
+}
+});
+}
+}
+
+return res.status(400).json({ error:"Invalid email or password" });
 
 }catch(err){
 console.log("LOGIN ERROR:", err);
-res.status(500).json({error:"Server error"});
+res.status(500).json({ error:"Server error" });
 }
 
 });
@@ -158,7 +183,7 @@ res.json(result.rows[0]);
 
 }catch(err){
 console.log(err);
-res.status(500).json({error:err.message});
+res.status(500).json({ error:err.message });
 }
 
 });
@@ -181,11 +206,11 @@ WHERE student_id=$5`,
 [name,department,year_of_study,contact_number,student_id]
 );
 
-res.json({message:"Profile updated successfully"});
+res.json({ message:"Profile updated successfully" });
 
 }catch(err){
 console.log(err);
-res.status(500).json({error:err.message});
+res.status(500).json({ error:err.message });
 }
 
 });
